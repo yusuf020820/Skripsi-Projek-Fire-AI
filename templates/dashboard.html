@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard Prediksi Kebakaran</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+</head>
+
+<body>
+  <div class="topbar">Dashboard Prediksi Kebakaran</div>
+
+  <div class="wrap">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for cat, msg in messages %}
+    <div class="{{ 'error' if cat=='error' else 'alert' }}">{{ msg }}</div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    {% if hasil %}
+    <div class="alert">Prediksi berhasil: Air {{ hasil.air }} m³ · Mobil {{ hasil.mobil }} unit</div>
+    {% endif %}
+
+    <div class="grid">
+      <!-- KIRI -->
+      <div class="left">
+        <div class="card">
+          <h3 class="title">Laporan per Kecamatan</h3>
+          <div class="chart-box"><canvas id="pieKecamatan"></canvas></div>
+          <div class="muted">Distribusi kejadian berdasar kecamatan (otomatis dari alamat).</div>
+        </div>
+
+        <div class="card">
+          <h3 class="title">Form Prediksi</h3>
+          <form method="post" action="/submit">
+            <input type="text" name="nama" class="form-input" placeholder="Nama Pelapor" required />
+            <input type="text" name="lokasi" class="form-input" placeholder="Lokasi Kejadian" required />
+            <input type="text" name="obyek" class="form-input" placeholder="Objek yang Terbakar" required />
+            <button type="submit" class="button">Prediksi & Kirim</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- KANAN -->
+      <div class="right">
+        <div class="card">
+          <h3 class="title">Laporan Terkini (Google Sheet)</h3>
+          <div class="table-wrap">
+            <table>
+              <!-- kontrol lebar kolom -->
+              <colgroup>
+                <col style="width:150px;"> <!-- Waktu -->
+                <col style="width:160px;"> <!-- Nama -->
+                <col> <!-- Alamat (auto) -->
+                <col style="width:150px;"> <!-- Kecamatan -->
+                <col style="width:120px;"> <!-- Obyek -->
+                <col style="width:80px;"> <!-- Air -->
+                <col style="width:80px;"> <!-- Mobil -->
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>Waktu</th>
+                  <th>Nama Pelapor</th>
+                  <th class="col-alamat">Alamat</th>
+                  <th>Kecamatan</th>
+                  <th>Obyek</th>
+                  <th>Air</th>
+                  <th>Mobil</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in laporan %}
+                <tr>
+                  <td>{{ row['Waktu'] or row['Waktu_dt'] }}</td>
+                  <td>{{ row['Nama Pelapor'] }}</td>
+                  <td class="col-alamat">{{ row['Alamat'] }}</td>
+                  <td>{{ row['Kecamatan'] if 'Kecamatan' in row else row['Kawasan'] }}</td>
+                  <td>{{ row['Obyek'] }}</td>
+                  <td>{{ row['Air'] is not none and (row['Air']|round(2)) }}</td>
+                  <td>{{ row['Mobil'] }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="title" style="text-align:center;margin-bottom:8px;">DATA KEBAKARAN </h3>
+          <div class="filters">
+            <select id="period" class="form-input" style="max-width:160px;">
+              <option value="day">Harian</option>
+              <option value="month" selected>Bulanan</option>
+              <option value="year">Tahunan</option>
+            </select>
+            <input id="kecamatan" class="form-input" list="list-kecamatan" placeholder="Filter Kecamatan " />
+            <datalist id="list-kecamatan">
+              {% if kecamatan_opts %}
+              {% for k in kecamatan_opts %}
+              <option value="{{ k }}"></option>
+              {% endfor %}
+              {% endif %}
+            </datalist>
+            <input id="obyek" class="form-input" placeholder="Filter Objek (mis. rumah, pasar)" />
+            <button id="apply" class="button small">Terapkan</button>
+          </div>
+          <div class="chart-box-lg"><canvas id="barTren"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Data dari backend (Jinja2)
+    const pieData = {{ pie_data | tojson }};
+    const barSeed = {{ bar_data | tojson }};
+
+    // PIE per Kecamatan
+    (function () {
+      const labels = Object.keys(pieData);
+      const values = Object.values(pieData);
+      const ctx = document.getElementById('pieKecamatan').getContext('2d');
+      new Chart(ctx, {
+        type: 'pie',
+        data: { labels, datasets: [{ data: values }] },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+      });
+    })();
+
+    // BAR dinamis via /api/stats
+    let barChart;
+    async function loadBar() {
+      const qs = new URLSearchParams({
+        period: document.getElementById('period').value,
+        kecamatan: document.getElementById('kecamatan').value || "",
+        obyek: document.getElementById('obyek').value || ""   // <-- ini
+      });
+      const res = await fetch(`/api/stats?${qs.toString()}`);
+      const { labels, values } = await res.json();
+
+      const ctx = document.getElementById('barTren').getContext('2d');
+      if (barChart) barChart.destroy();
+      barChart = new Chart(ctx, {
+        type: 'bar',
+        data: { labels, datasets: [{ label: 'Jumlah Kejadian', data: values }] },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+      });
+    }
+
+    // Render awal (pakai seed agar cepat), lalu sync via API
+    (function initial() {
+      const entries = Object.entries(barSeed || {}).sort((a, b) => a[0].localeCompare(b[0]));
+      if (entries.length) {
+        const labels = entries.map(([k]) => k);
+        const values = entries.map(([, v]) => v);
+        const ctx = document.getElementById('barTren').getContext('2d');
+        barChart = new Chart(ctx, {
+          type: 'bar',
+          data: { labels, datasets: [{ label: 'Jumlah Kejadian', data: values }] },
+          options: {
+            responsive: true, plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+          }
+        });
+      }
+      loadBar();
+    })();
+
+    document.getElementById('apply').addEventListener('click', loadBar);
+  </script>
+</body>
+
+</html>

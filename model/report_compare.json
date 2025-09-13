@@ -1,0 +1,14 @@
+{
+  "RF":{
+    "MAE_air":4.896,
+    "R2_air":0.363,
+    "MAE_mobil":0.466,
+    "R2_mobil":0.741
+  },
+  "GBR":{
+    "MAE_air":6.31,
+    "R2_air":0.196,
+    "MAE_mobil":1.451,
+    "R2_mobil":0.37
+  }
+}

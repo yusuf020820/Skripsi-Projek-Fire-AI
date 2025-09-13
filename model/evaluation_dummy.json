@@ -1,0 +1,8 @@
+{
+  "MAE_air": 23.39,
+  "MSE_air": 3511.52,
+  "R2_air": -0.46,
+  "MAE_mobil": 1.89,
+  "MSE_mobil": 6.98,
+  "R2_mobil": -0.01
+}

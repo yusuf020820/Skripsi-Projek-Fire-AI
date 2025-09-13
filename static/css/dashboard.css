@@ -1,0 +1,227 @@
+:root {
+  --bg: #f3f4f6;
+  --card: #fff;
+  --muted: #6b7280;
+  --accent: #0a58ff;
+  --danger: #dc3545;
+  --radius: 16px;
+  --shadow: 0 6px 20px rgba(0, 0, 0, .08)
+}
+
+* {
+  box-sizing: border-box
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  font-family: ui-sans-serif, system-ui, Segoe UI, Roboto, Arial
+}
+
+/* Header + layout */
+.topbar {
+  height: 84px;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  color: #fff;
+  font-weight: 700
+}
+
+.wrap {
+  padding: 20px;
+  max-width: 1280px;
+  margin: 0 auto
+}
+
+.grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 360px 1fr;
+  grid-auto-rows: minmax(140px, auto)
+}
+
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px;
+  overflow: hidden
+}
+
+.left {
+  display: grid;
+  gap: 20px
+}
+
+.right {
+  display: grid;
+  gap: 22px;
+  grid-template-rows: 360px 1fr
+}
+
+/* atur tinggi kartu tabel di sini */
+
+.title {
+  font-weight: 700;
+  margin: 0 0 12px
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 13px
+}
+
+.alert {
+  background: #d4edda;
+  color: #155724;
+  border-radius: 12px;
+  padding: 12px;
+  margin: 12px 0
+}
+
+.error {
+  background: #f8d7da;
+  color: #842029;
+  border-radius: 12px;
+  padding: 12px;
+  margin: 12px 0
+}
+
+/* Tabel */
+.table-wrap {
+  height: 260px;
+  /* atur tinggi area tabel di sini */
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  max-width: 100%
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+  /* Penting supaya lebar kolom konsisten */
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  background: #eef2ff;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: .4px
+}
+
+th,
+td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap;
+  /* Supaya teks tidak turun */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* Tambahkan ... jika teks terlalu panjang */
+}
+
+
+th:nth-child(3),
+/* Kolom Alamat */
+td:nth-child(3) {
+  min-width: 200px;
+  /* Atur lebar minimum kolom Alamat */
+  max-width: 250px;
+  /* Batas maksimum */
+}
+
+td.col-alamat,
+th.col-alamat {
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* lebar kolom (opsional) */
+colgroup col:nth-child(1) {
+  width: 150px
+}
+
+colgroup col:nth-child(2) {
+  width: 160px
+}
+
+colgroup col:nth-child(3) {
+  width: auto
+}
+
+colgroup col:nth-child(4) {
+  width: 150px
+}
+
+colgroup col:nth-child(5) {
+  width: 120px
+}
+
+colgroup col:nth-child(6) {
+  width: 80px
+}
+
+colgroup col:nth-child(7) {
+  width: 80px
+}
+
+/* Form & filter */
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  background: #fafafa
+}
+
+.button {
+  width: 100%;
+  background: var(--danger);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  font-weight: 600;
+  cursor: pointer
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px
+}
+
+.button.small {
+  width: auto;
+  padding: 10px 14px
+}
+
+/* Chart */
+.chart-box {
+  height: 300px
+}
+
+.chart-box-lg {
+  height: 440px
+}
+
+@media (max-width:1024px) {
+  .grid {
+    grid-template-columns: 1fr
+  }
+
+  .right {
+    grid-template-rows: auto auto
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "RandomForest": {
+    "MAE_air": 21.705,
+    "MSE_air": 2612.803,
+    "R2_air": -0.083,
+    "MAE_mobil": 1.953,
+    "MSE_mobil": 6.618,
+    "R2_mobil": -0.041
+  },
+  "GradientBoosting": {
+    "MAE_air": 21.49,
+    "MSE_air": 2780.196,
+    "R2_air": -0.152,
+    "MAE_mobil": 1.952,
+    "MSE_mobil": 6.326,
+    "R2_mobil": 0.005
+  }
+}
