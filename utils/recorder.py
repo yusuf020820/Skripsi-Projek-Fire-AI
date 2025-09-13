@@ -7,7 +7,7 @@ import time
 def simpan_ke_google_sheet(nama, lokasi, obyek, air, mobil):
     try:
         base_dir = os.path.dirname(os.path.dirname(__file__))
-        cred_path = os.path.join(base_dir, 'fireai-sheet-logger-3fe9bd7d4d14.json')
+        cred_path = os.path.join(base_dir, 'gsheet-cred.json')
 
         scope = [
             'https://spreadsheets.google.com/feeds',

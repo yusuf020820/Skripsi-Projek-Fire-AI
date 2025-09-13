@@ -15,12 +15,12 @@ client = Client(ACCOUNT_SID, AUTH_TOKEN)
 def kirim_wa(nama, lokasi, obyek, air, mobil):
     try:
         pesan = (
-            f"🔥 *Laporan Kebakaran Baru!*\n\n"
-            f"👤 Nama: {nama}\n"
-            f"📍 Lokasi: {lokasi}\n"
-            f"🔥 Obyek: {obyek}\n\n"
-            f"💧 Prediksi Air: {air} m³\n"
-            f"🚒 Prediksi Armada: {mobil} unit"
+            f"Laporan Kebakaran Baru!*\n\n"
+            f"Nama: {nama}\n"
+            f"Lokasi: {lokasi}\n"
+            f"Obyek: {obyek}\n\n"
+            f"Prediksi Air: {air} m³\n"
+            f"Prediksi Armada: {mobil} unit"
         )
 
         message = client.messages.create(

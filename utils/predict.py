@@ -9,7 +9,7 @@ MODEL_PATH = os.path.join("model", "trained_model_dummy.pkl")
 try:
     model_data = joblib.load(MODEL_PATH)
 except FileNotFoundError:
-    raise Exception(f"❌ Model tidak ditemukan di: {MODEL_PATH}")
+    raise Exception(f" Model tidak ditemukan di: {MODEL_PATH}")
 
 model_air = model_data['model_air']
 model_mobil = model_data['model_mobil']
